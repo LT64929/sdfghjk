@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetroPlay - NES Emulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 RetroPlay</h1>
+            <p class="subtitle">Play Classic NES Games</p>
+        </header>
+
+        <div class="controls-panel">
+            <div class="rom-upload">
+                <label for="rom-input" class="upload-btn">
+                    <span>📁 Load ROM File</span>
+                    <input type="file" id="rom-input" accept=".nes" hidden>
+                </label>
+                <p class="file-info" id="file-info">No ROM loaded</p>
+            </div>
+
+            <div class="game-controls">
+                <button id="play-btn" class="btn btn-primary" disabled>Play</button>
+                <button id="pause-btn" class="btn btn-secondary" disabled>Pause</button>
+                <button id="stop-btn" class="btn btn-secondary" disabled>Stop</button>
+                <button id="reset-btn" class="btn btn-secondary" disabled>Reset</button>
+            </div>
+        </div>
+
+        <div class="emulator-container">
+            <canvas id="nes-canvas" width="256" height="240"></canvas>
+            <div class="controls-info">
+                <h3>Keyboard Controls</h3>
+                <ul>
+                    <li><strong>Arrow Keys:</strong> D-Pad</li>
+                    <li><strong>Z:</strong> A Button</li>
+                    <li><strong>X:</strong> B Button</li>
+                    <li><strong>Enter:</strong> Start</li>
+                    <li><strong>Space:</strong> Select</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>About RetroPlay</h3>
+            <p>RetroPlay is a web-based NES emulator that lets you play classic Nintendo games directly in your browser.</p>
+            <p class="note">⚠️ <strong>Note:</strong> You must provide your own ROM files. RetroPlay does not host or distribute ROMs.</p>
+        </div>
+    </div>
+
+    <script src="https://www.jsnes.org/source/nes.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
