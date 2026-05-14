@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midnight Watch - Survival Horror</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+        }
+
+        .header {
+            background: #1a1a1a;
+            border-bottom: 2px solid #ff4444;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff4444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .time-display {
+            font-size: 18px;
+            color: #ffff00;
+            background: #222;
+            padding: 8px 16px;
+            border: 1px solid #ffff00;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .camera-view {
+            flex: 2;
+            background: #000;
+            border: 3px solid #333;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .camera-feed {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .camera-scan {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 0, 0, 0.5);
+            position: absolute;
+            top: 0;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .entity {
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 50, 50, 0.3);
+            border: 2px solid #ff3232;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            position: absolute;
+            animation: flicker 0.1s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .panel {
+            background: #1a1a1a;
+            border: 2px solid #444;
+            padding: 15px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .panel-title {
+            color: #ffff00;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ffff00;
+            padding-bottom: 5px;
+        }
+
+        .resource-bar {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resource-label {
+            color: #ccc;
+            font-size: 12px;
+            min-width: 80px;
+        }
+
+        .bar {
+            flex: 1;
+            height: 20px;
+            background: #333;
+            border: 1px solid #555;
+            margin: 0 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #00ff00;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .bar-fill.warning {
+            background: #ffff00;
+        }
+
+        .bar-fill.danger {
+            background: #ff4444;
+        }
+
+        .resource-value {
+            color: #00ff00;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .threat-list {
+            list-style: none;
+        }
+
+        .threat-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #222;
+            border-left: 3px solid #ff4444;
+            color: #ccc;
+            font-size: 12px;
+            animation: pulse-threat 1s infinite;
+        }
+
+        @keyframes pulse-threat {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            background: #333;
+            border: 1px solid #666;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #444;
+            border-color: #fff;
+        }
+
+        .btn.active {
+            background: #ff4444;
+            border-color: #ff4444;
+            color: #000;
+        }
+
+        .game-over {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .game-over.show {
+            display: flex;
+        }
+
+        .game-over-text {
+            font-size: 48px;
+            color: #ff4444;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .game-over-message {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        .restart-btn {
+            padding: 15px 40px;
+            font-size: 16px;
+            background: #ff4444;
+            border: none;
+            color: #000;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .restart-btn:hover {
+            background: #ff6666;
+        }
+
+        .wave-counter {
+            color: #ffff00;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="title">MIDNIGHT WATCH</div>
+            <div class="time-display">NIGHT <span id="wave">1</span> | TIME: <span id="timer">300</span>s</div>
+        </div>
+
+        <div class="main-content">
+            <div class="camera-view">
+                <div class="camera-feed">
+                    <div class="camera-scan"></div>
+                    <div id="entity" class="entity" style="display: none;">👁️</div>
+                    <div id="status-text" style="font-size: 20px; color: #666; text-align: center;">
+                        <div>SYSTEM ONLINE</div>
+                        <div style="font-size: 12px; color: #444;">Monitoring facility...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <div class="panel-title">Status</div>
+                    
+                    <div class="resource-bar">
+                        <span class="resource-label">ENERGY</span>
+                        <div class="bar">
+                            <div id="energy-bar" class="bar-fill" style="width: 100%;"></div>
+                        </div>
+                        <span id="energy-val" class="resource-value">100</span>
+                    </div>
+
+                    <div class="resource-bar">
+                        <span class="resource-label">HEALTH</span>
+                        <div class="bar">
+                            <div id="health-bar" class="bar-fill" style="width: 100%;"></div>
+                        </div>
+                        <span id="health-val" class="resource-value">100</span>
+                    </div>
+
+                    <div class="resource-bar">
+                        <span class="resource-label">SANITY</span>
+                        <div class="bar">
+                            <div id="sanity-bar" class="bar-fill" style="width: 100%;"></div>
+                        </div>
+                        <span id="sanity-val" class="resource-value">100</span>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn" onclick="game.toggleLights()">LIGHTS</button>
+                        <button class="btn" onclick="game.toggleDoor()">DOOR</button>
+                        <button class="btn" onclick="game.usePanic()">PANIC</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Threats</div>
+                    <ul class="threat-list" id="threat-list">
+                        <li class="threat-item">System initialized...</li>
+                    </ul>
+                    <div class="wave-counter">
+                        Waves: <span id="wave-counter">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-over" id="game-over">
+        <div class="game-over-text" id="game-over-title">GAME OVER</div>
+        <div class="game-over-message" id="game-over-msg">You survived the night</div>
+        <button class="restart-btn" onclick="location.reload()">RESTART</button>
+    </div>
+
+    <script>
+        const game = {
+            wave: 1,
+            time: 300,
+            energy: 100,
+            health: 100,
+            sanity: 100,
+            lightsOn: true,
+            doorLocked: true,
+            isPanicMode: false,
+            threatCount: 0,
+            wavesSurvived: 0,
+
+            init() {
+                this.updateUI();
+                this.startWave();
+                setInterval(() => this.gameLoop(), 1000);
+            },
+
+            gameLoop() {
+                this.time--;
+                this.energy -= this.lightsOn ? 2 : 1;
+                this.sanity -= this.isPanicMode ? 3 : 1;
+
+                if (this.energy < 0) this.energy = 0;
+                if (this.sanity < 0) this.sanity = 0;
+
+                if (this.energy <= 0) {
+                    this.health -= 5;
+                }
+
+                if (this.health <= 0) {
+                    this.gameOver('You were consumed by the darkness...');
+                    return;
+                }
+
+                if (this.time <= 0) {
+                    this.completeWave();
+                    return;
+                }
+
+                this.updateUI();
+                
+                if (Math.random() < 0.02 * this.wave) {
+                    this.threatAppears();
+                }
+            },
+
+            startWave() {
+                this.time = 300;
+                this.threatCount = 0;
+                this.updateThreats();
+            },
+
+            threatAppears() {
+                const entity = document.getElementById('entity');
+                const statusText = document.getElementById('status-text');
+                
+                this.threatCount++;
+                entity.style.display = 'block';
+                entity.style.left = Math.random() * 80 + '%';
+                entity.style.top = Math.random() * 80 + '%';
+                
+                statusText.innerHTML = `<div style="color: #ff4444;">⚠️ THREAT DETECTED ⚠️</div>`;
+
+                this.sanity -= 10;
+                if (!this.doorLocked) this.health -= 15;
+
+                setTimeout(() => {
+                    entity.style.display = 'none';
+                    statusText.innerHTML = `<div>SYSTEM ONLINE</div><div style="font-size: 12px; color: #444;">Monitoring facility...</div>`;
+                }, 800);
+
+                this.updateThreats();
+            },
+
+            updateThreats() {
+                const threatList = document.getElementById('threat-list');
+                threatList.innerHTML = '';
+                
+                const threats = [
+                    `[WAVE ${this.wave}] Entities detected: ${this.threatCount}`,
+                    `Door status: ${this.doorLocked ? 'LOCKED' : 'UNLOCKED'}`,
+                    `Lights: ${this.lightsOn ? 'ON' : 'OFF'}`,
+                    `Time remaining: ${Math.floor(this.time / 60)}m ${this.time % 60}s`
+                ];
+
+                threats.forEach(threat => {
+                    const li = document.createElement('li');
+                    li.className = 'threat-item';
+                    li.textContent = threat;
+                    threatList.appendChild(li);
+                });
+
+                document.getElementById('wave-counter').textContent = this.wavesSurvived;
+            },
+
+            toggleLights() {
+                this.lightsOn = !this.lightsOn;
+                document.querySelector('.btn:nth-child(1)').classList.toggle('active', this.lightsOn);
+                this.energy -= 20;
+            },
+
+            toggleDoor() {
+                this.doorLocked = !this.doorLocked;
+                document.querySelector('.btn:nth-child(2)').classList.toggle('active', !this.doorLocked);
+                this.energy -= 10;
+            },
+
+            usePanic() {
+                this.isPanicMode = !this.isPanicMode;
+                document.querySelector('.btn:nth-child(3)').classList.toggle('active', this.isPanicMode);
+                if (this.isPanicMode) {
+                    this.health += 20;
+                    if (this.health > 100) this.health = 100;
+                    setTimeout(() => {
+                        this.isPanicMode = false;
+                        document.querySelector('.btn:nth-child(3)').classList.remove('active');
+                    }, 5000);
+                }
+            },
+
+            completeWave() {
+                this.wavesSurvived++;
+                this.wave++;
+                this.energy = Math.min(100, this.energy + 30);
+                this.health = Math.min(100, this.health + 20);
+                this.sanity = Math.min(100, this.sanity + 40);
+                this.startWave();
+            },
+
+            gameOver(reason) {
+                document.getElementById('game-over').classList.add('show');
+                document.getElementById('game-over-msg').textContent = `${reason} | Waves survived: ${this.wavesSurvived}`;
+            },
+
+            updateUI() {
+                document.getElementById('timer').textContent = this.time;
+                document.getElementById('wave').textContent = this.wave;
+
+                const updateBar = (id, value, label) => {
+                    const bar = document.getElementById(id);
+                    bar.style.width = value + '%';
+                    bar.classList.remove('warning', 'danger');
+                    if (value < 30) bar.classList.add('danger');
+                    else if (value < 60) bar.classList.add('warning');
+                    document.getElementById(label).textContent = Math.round(value);
+                };
+
+                updateBar('energy-bar', this.energy, 'energy-val');
+                updateBar('health-bar', this.health, 'health-val');
+                updateBar('sanity-bar', this.sanity, 'sanity-val');
+            }
+        };
+
+        game.init();
+    </script>
+</body>
+</html>
