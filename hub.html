@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetroPlay - Gaming Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+            letter-spacing: 3px;
+        }
+
+        header p {
+            font-size: 1.3em;
+            color: #bbb;
+            font-style: italic;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            position: relative;
+            height: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card-header {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-card-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .game-card-1::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+
+        .game-card-2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .game-card-2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.2), transparent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .game-card-content {
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .game-description {
+            color: #ddd;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .game-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .game-features li {
+            color: #bbb;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .game-features li:before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #ffd93d;
+        }
+
+        .play-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8a5b);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .play-btn:active {
+            transform: scale(0.98);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a2e;
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .modal-message {
+            color: #bbb;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid #fff;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .modal-btn.primary {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .modal-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5em;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-card-header {
+                height: 150px;
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <header>
+            <h1>🎮 RetroPlay Hub</h1>
+            <p>Your Gateway to Classic Gaming & Modern Thrills</p>
+        </header>
+
+        <div class="games-grid">
+            <!-- NES Emulator Card -->
+            <div class="game-card">
+                <div class="game-card-header game-card-1">🕹️</div>
+                <div class="game-card-content">
+                    <h2 class="game-title">RetroPlay NES</h2>
+                    <p class="game-description">
+                        Play classic Nintendo Entertainment System games directly in your browser.
+                    </p>
+                    <ul class="game-features">
+                        <li>Load your own .NES ROM files</li>
+                        <li>Full keyboard controls</li>
+                        <li>Authentic NES experience</li>
+                    </ul>
+                    <button class="play-btn" onclick="playGame('nes')">Play Now</button>
+                </div>
+            </div>
+
+            <!-- Horror Game Card -->
+            <div class="game-card">
+                <div class="game-card-header game-card-2">👁️</div>
+                <div class="game-card-content">
+                    <h2 class="game-title">Midnight Watch</h2>
+                    <p class="game-description">
+                        A psychological survival horror game inspired by FNAF. Can you survive the night?
+                    </p>
+                    <ul class="game-features">
+                        <li>Progressive difficulty</li>
+                        <li>Resource management</li>
+                        <li>Retro terminal aesthetic</li>
+                    </ul>
+                    <button class="play-btn" onclick="playGame('horror')">Play Now</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>RetroPlay © 2026 | Made with ❤️ for retro gaming lovers</p>
+            <p>All content is original or user-provided. No ROMs are hosted on this site.</p>
+        </footer>
+    </div>
+
+    <!-- Modal for game launch -->
+    <div class="modal" id="gameModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">Loading...</div>
+            <div class="modal-message" id="modalMessage">Launching your game...</div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="confirmPlay()">Launch</button>
+                <button class="modal-btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate random stars
+        function generateStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        generateStars();
+
+        let selectedGame = '';
+
+        function playGame(game) {
+            selectedGame = game;
+            const modal = document.getElementById('gameModal');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+
+            if (game === 'nes') {
+                title.textContent = '🕹️ RetroPlay NES';
+                message.textContent = 'Ready to play classic NES games? Click Launch to begin!';
+            } else if (game === 'horror') {
+                title.textContent = '👁️ Midnight Watch';
+                message.textContent = 'Are you ready to survive the night? Enter if you dare...';
+            }
+
+            modal.classList.add('show');
+        }
+
+        function confirmPlay() {
+            if (selectedGame === 'nes') {
+                window.location.href = 'index.html';
+            } else if (selectedGame === 'horror') {
+                window.location.href = 'horror-game.html';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('gameModal').classList.remove('show');
+            selectedGame = '';
+        }
+
+        // Close modal on background click
+        document.getElementById('gameModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Prevent modal close on content click
+        document.querySelector('.modal-content').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html>
