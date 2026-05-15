@@ -97,6 +97,16 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            filter: blur(0px);
+            transition: filter 0.3s;
+        }
+
+        .camera-feed.blurred {
+            filter: blur(8px);
+        }
+
+        .camera-feed.clear {
+            filter: blur(0px);
         }
 
         .camera-scene {
@@ -120,31 +130,17 @@
             background: linear-gradient(180deg, #2a1a1a 0%, #1a1a2a 100%);
         }
 
-        .lobby-bg::before {
-            content: '';
-            position: absolute;
-            width: 80%;
-            height: 70%;
-            border: 2px solid #444;
-            background: rgba(30, 30, 50, 0.5);
-            top: 15%;
-            left: 10%;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-        }
-
         .hallway-bg {
             background: linear-gradient(90deg, #1a0a1a 0%, #0a1a2a 50%, #1a0a1a 100%);
-            background-size: 200% 100%;
             animation: hallway-flicker 0.3s infinite alternate;
         }
 
         @keyframes hallway-flicker {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 100% 0%; }
+            0% { filter: brightness(0.8); }
+            100% { filter: brightness(1); }
         }
 
         .basement-bg {
-            background: linear-gradient(180deg, #0a0a0a 0%, #1a0a0a 100%);
             background: repeating-linear-gradient(
                 45deg,
                 #0a0a0a,
@@ -156,18 +152,6 @@
 
         .exterior-bg {
             background: linear-gradient(180deg, #000a1a 0%, #0a0a00 50%, #1a0a00 100%);
-        }
-
-        .exterior-bg::before {
-            content: '';
-            position: absolute;
-            width: 30%;
-            height: 50%;
-            background: radial-gradient(circle, rgba(255,100,0,0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            bottom: 0;
-            left: 10%;
-            filter: blur(40px);
         }
 
         .camera-scan {
@@ -186,23 +170,24 @@
         }
 
         .entity {
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 50, 50, 0.3);
-            border: 2px solid #ff3232;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 50, 50, 0.5);
+            border: 3px solid #ff3232;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 80px;
+            font-size: 120px;
             position: absolute;
             animation: flicker 0.1s infinite;
             z-index: 5;
-            filter: drop-shadow(0 0 10px #ff3232);
+            filter: drop-shadow(0 0 20px #ff3232);
+            border-radius: 10px;
         }
 
         @keyframes flicker {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.8; }
         }
 
         @keyframes entity-move {
@@ -394,6 +379,150 @@
             color: #000;
         }
 
+        .power-btn {
+            flex: 1;
+            padding: 10px;
+            background: #1a3a1a;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            transition: all 0.2s;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .power-btn:hover {
+            background: #2a5a2a;
+            border-color: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+        .mini-game-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .mini-game-modal.show {
+            display: flex;
+        }
+
+        .mini-game-content {
+            background: #1a1a1a;
+            border: 3px solid #00ff00;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .mini-game-title {
+            font-size: 28px;
+            color: #00ff00;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .mini-game-subtitle {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .switches-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .switch {
+            width: 80px;
+            height: 120px;
+            background: #222;
+            border: 2px solid #444;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+            border-radius: 5px;
+        }
+
+        .switch:hover {
+            border-color: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .switch.on {
+            background: #001a00;
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+        }
+
+        .switch-lever {
+            font-size: 40px;
+            margin-bottom: 10px;
+            transition: transform 0.2s;
+        }
+
+        .switch.on .switch-lever {
+            transform: rotate(180deg);
+        }
+
+        .switch-label {
+            font-size: 10px;
+            color: #888;
+        }
+
+        .switch.on .switch-label {
+            color: #00ff00;
+        }
+
+        .mini-game-timer {
+            font-size: 18px;
+            color: #ffff00;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .mini-game-success {
+            font-size: 20px;
+            color: #00ff00;
+            margin: 20px 0;
+        }
+
+        .mini-game-close {
+            padding: 12px 30px;
+            background: #ff4444;
+            border: none;
+            color: #000;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 20px;
+            border-radius: 3px;
+        }
+
+        .mini-game-close:hover {
+            background: #ff6666;
+        }
+
         .game-over {
             display: none;
             position: fixed;
@@ -496,6 +625,19 @@
                 filter: brightness(0.7);
             }
         }
+
+        .clarity-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #00ff00;
+            z-index: 15;
+            border: 1px solid #00ff00;
+        }
     </style>
 </head>
 <body>
@@ -511,7 +653,8 @@
                     <span class="camera-location" id="camera-location">📹 CAMERA 1: LOBBY</span>
                     <span class="camera-status"><span class="camera-indicator"></span>REC</span>
                 </div>
-                <div class="camera-feed" id="camera-feed">
+                <div class="camera-feed" id="camera-feed" class="blurred">
+                    <div class="clarity-indicator" id="clarity-indicator">📡 LOW CLARITY</div>
                     <div class="camera-scene" id="camera-scene">
                         <div class="scene-background lobby-bg" id="scene-bg"></div>
                         <div class="camera-scan"></div>
@@ -563,6 +706,8 @@
                         <button class="btn" onclick="game.toggleDoor()">DOOR</button>
                         <button class="btn" onclick="game.usePanic()">PANIC</button>
                     </div>
+
+                    <button class="power-btn" onclick="game.startPowerGame()">⚡ RESTORE POWER</button>
                 </div>
 
                 <div class="panel">
@@ -575,6 +720,17 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="mini-game-modal" id="mini-game-modal">
+        <div class="mini-game-content">
+            <div class="mini-game-title">⚡ POWER CONTROL CIRCUIT</div>
+            <div class="mini-game-subtitle">Flip all switches UP to restore power!</div>
+            <div class="mini-game-timer" id="mini-game-timer">Time: 15s</div>
+            <div class="switches-container" id="switches-container"></div>
+            <div class="mini-game-success" id="mini-game-success" style="display: none;">✓ POWER RESTORED!</div>
+            <button class="mini-game-close" onclick="game.closePowerGame()">Close</button>
         </div>
     </div>
 
@@ -677,6 +833,9 @@
             threatCount: 0,
             wavesSurvived: 0,
             currentCamera: 0,
+            cameraClarity: 0,  // 0 = blurry, 100 = clear
+            powerGameActive: false,
+            powerGameSwitches: [],
 
             // Camera system
             cameras: [
@@ -711,6 +870,7 @@
 
                 if (this.energy <= 0) {
                     this.health -= 5;
+                    this.cameraClarity = Math.max(0, this.cameraClarity - 5);
                 }
 
                 if (this.health <= 0) {
@@ -820,6 +980,102 @@
 
                 document.getElementById('entity').style.display = 'none';
                 this.energy -= 5; // Switching cameras costs energy
+                this.updateCameraClarity();
+            },
+
+            updateCameraClarity() {
+                const feed = document.getElementById('camera-feed');
+                const indicator = document.getElementById('clarity-indicator');
+                
+                if (this.cameraClarity < 30) {
+                    feed.classList.remove('clear');
+                    feed.classList.add('blurred');
+                    indicator.textContent = '📡 LOW CLARITY';
+                    indicator.style.color = '#ff4444';
+                } else if (this.cameraClarity < 70) {
+                    feed.classList.remove('clear', 'blurred');
+                    feed.style.filter = `blur(${8 - (this.cameraClarity / 10)}px)`;
+                    indicator.textContent = '📡 MEDIUM CLARITY';
+                    indicator.style.color = '#ffff00';
+                } else {
+                    feed.classList.remove('blurred');
+                    feed.classList.add('clear');
+                    indicator.textContent = '📡 HIGH CLARITY - MONSTERS VISIBLE!';
+                    indicator.style.color = '#00ff00';
+                }
+            },
+
+            startPowerGame() {
+                if (this.powerGameActive) return;
+                this.powerGameActive = true;
+
+                // Generate random switches
+                this.powerGameSwitches = Array.from({length: 9}, () => Math.random() > 0.5);
+                
+                const modal = document.getElementById('mini-game-modal');
+                modal.classList.add('show');
+                
+                const container = document.getElementById('switches-container');
+                container.innerHTML = '';
+                
+                this.powerGameSwitches.forEach((state, i) => {
+                    const switchEl = document.createElement('div');
+                    switchEl.className = 'switch' + (state ? ' on' : '');
+                    switchEl.innerHTML = `<div class="switch-lever">${state ? '⬇️' : '⬆️'}</div><div class="switch-label">SW${i+1}</div>`;
+                    switchEl.onclick = () => this.toggleSwitch(i);
+                    container.appendChild(switchEl);
+                });
+
+                // Start countdown
+                let timeLeft = 15;
+                const timerEl = document.getElementById('mini-game-timer');
+                const successEl = document.getElementById('mini-game-success');
+                successEl.style.display = 'none';
+                
+                const timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerEl.textContent = `Time: ${timeLeft}s`;
+                    
+                    if (this.checkPowerGameWin()) {
+                        clearInterval(timerInterval);
+                        successEl.style.display = 'block';
+                        timerEl.textContent = 'POWER RESTORED!';
+                        this.cameraClarity = 100;
+                        this.energy = Math.min(300, this.energy + 100);
+                        this.updateCameraClarity();
+                        setTimeout(() => {
+                            this.closePowerGame();
+                        }, 2000);
+                    } else if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timerEl.textContent = 'POWER RESTORATION FAILED';
+                        timerEl.style.color = '#ff4444';
+                        setTimeout(() => {
+                            this.closePowerGame();
+                        }, 2000);
+                    }
+                }, 1000);
+            },
+
+            toggleSwitch(index) {
+                this.powerGameSwitches[index] = !this.powerGameSwitches[index];
+                
+                const switches = document.querySelectorAll('.switch');
+                if (this.powerGameSwitches[index]) {
+                    switches[index].classList.add('on');
+                } else {
+                    switches[index].classList.remove('on');
+                }
+            },
+
+            checkPowerGameWin() {
+                return this.powerGameSwitches.every(s => s === true);
+            },
+
+            closePowerGame() {
+                const modal = document.getElementById('mini-game-modal');
+                modal.classList.remove('show');
+                this.powerGameActive = false;
             },
 
             updateThreats() {
@@ -831,6 +1087,7 @@
                     `Current camera: ${this.cameras[this.currentCamera].name}`,
                     `Door status: ${this.doorLocked ? '🔒 LOCKED' : '🔓 UNLOCKED'}`,
                     `Lights: ${this.lightsOn ? '💡 ON' : '⚫ OFF'}`,
+                    `Clarity: ${this.cameraClarity}%`,
                     `---`,
                 ];
 
@@ -882,6 +1139,8 @@
                 this.energy = Math.min(300, this.energy + 50);
                 this.health = Math.min(300, this.health + 40);
                 this.sanity = Math.min(300, this.sanity + 60);
+                this.cameraClarity = Math.max(0, this.cameraClarity - 20);
+                this.updateCameraClarity();
                 this.startWave();
             },
 
@@ -906,6 +1165,9 @@
                 updateBar('energy-bar', this.energy, 'energy-val');
                 updateBar('health-bar', this.health, 'health-val');
                 updateBar('sanity-bar', this.sanity, 'sanity-val');
+                
+                this.updateThreats();
+                this.updateCameraClarity();
             }
         };
 
