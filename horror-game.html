@@ -65,19 +65,109 @@
             position: relative;
             overflow: hidden;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+        }
+
+        .camera-header {
+            background: #111;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            font-size: 14px;
+        }
+
+        .camera-location {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .camera-status {
+            color: #ffff00;
+            font-size: 12px;
         }
 
         .camera-feed {
-            width: 100%;
-            height: 100%;
+            flex: 1;
             background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        .camera-scene {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scene-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .lobby-bg {
+            background: linear-gradient(180deg, #2a1a1a 0%, #1a1a2a 100%);
+        }
+
+        .lobby-bg::before {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 70%;
+            border: 2px solid #444;
+            background: rgba(30, 30, 50, 0.5);
+            top: 15%;
+            left: 10%;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .hallway-bg {
+            background: linear-gradient(90deg, #1a0a1a 0%, #0a1a2a 50%, #1a0a1a 100%);
+            background-size: 200% 100%;
+            animation: hallway-flicker 0.3s infinite alternate;
+        }
+
+        @keyframes hallway-flicker {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 0%; }
+        }
+
+        .basement-bg {
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a0a0a 100%);
+            background: repeating-linear-gradient(
+                45deg,
+                #0a0a0a,
+                #0a0a0a 10px,
+                #1a0a0a 10px,
+                #1a0a0a 20px
+            );
+        }
+
+        .exterior-bg {
+            background: linear-gradient(180deg, #000a1a 0%, #0a0a00 50%, #1a0a00 100%);
+        }
+
+        .exterior-bg::before {
+            content: '';
+            position: absolute;
+            width: 30%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(255,100,0,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: 0;
+            left: 10%;
+            filter: blur(40px);
         }
 
         .camera-scan {
@@ -86,6 +176,7 @@
             background: rgba(255, 0, 0, 0.5);
             position: absolute;
             top: 0;
+            z-index: 10;
             animation: scan 2s linear infinite;
         }
 
@@ -102,14 +193,82 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 60px;
+            font-size: 80px;
             position: absolute;
             animation: flicker 0.1s infinite;
+            z-index: 5;
+            filter: drop-shadow(0 0 10px #ff3232);
         }
 
         @keyframes flicker {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+
+        @keyframes entity-move {
+            0%, 100% { 
+                left: 30%;
+                top: 20%;
+            }
+            25% {
+                left: 70%;
+                top: 30%;
+            }
+            50% {
+                left: 50%;
+                top: 60%;
+            }
+            75% {
+                left: 20%;
+                top: 50%;
+            }
+        }
+
+        .entity.moving {
+            animation: flicker 0.1s infinite, entity-move 4s ease-in-out infinite;
+        }
+
+        .status-text {
+            font-size: 20px;
+            color: #666;
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .camera-controls {
+            background: #1a1a1a;
+            padding: 10px;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .camera-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px;
+            background: #333;
+            border: 2px solid #555;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .camera-btn:hover {
+            background: #444;
+            border-color: #fff;
+        }
+
+        .camera-btn.active {
+            background: #00ff00;
+            border-color: #00ff00;
+            color: #000;
+            font-weight: bold;
         }
 
         .sidebar {
@@ -280,6 +439,56 @@
             font-size: 14px;
             margin-top: 10px;
         }
+
+        .camera-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #ff3333;
+            border-radius: 50%;
+            animation: pulse-camera 1s infinite;
+            margin-right: 5px;
+        }
+
+        @keyframes pulse-camera {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .creature-sound {
+            position: absolute;
+            font-size: 14px;
+            color: #ff4444;
+            animation: sound-rise 2s ease-out forwards;
+            pointer-events: none;
+            z-index: 3;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff4444;
+        }
+
+        @keyframes sound-rise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-80px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .glitch-effect {
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(0.7);
+            }
+        }
     </style>
 </head>
 <body>
@@ -291,13 +500,26 @@
 
         <div class="main-content">
             <div class="camera-view">
-                <div class="camera-feed">
-                    <div class="camera-scan"></div>
-                    <div id="entity" class="entity" style="display: none;">👁️</div>
-                    <div id="status-text" style="font-size: 20px; color: #666; text-align: center;">
-                        <div>SYSTEM ONLINE</div>
-                        <div style="font-size: 12px; color: #444;">Monitoring facility...</div>
+                <div class="camera-header">
+                    <span class="camera-location" id="camera-location">📹 CAMERA 1: LOBBY</span>
+                    <span class="camera-status"><span class="camera-indicator"></span>REC</span>
+                </div>
+                <div class="camera-feed" id="camera-feed">
+                    <div class="camera-scene" id="camera-scene">
+                        <div class="scene-background lobby-bg" id="scene-bg"></div>
+                        <div class="camera-scan"></div>
+                        <div id="entity" class="entity" style="display: none;">👹</div>
+                        <div id="status-text" class="status-text">
+                            <div>SYSTEM ONLINE</div>
+                            <div style="font-size: 12px; color: #444;">Monitoring facility...</div>
+                        </div>
                     </div>
+                </div>
+                <div class="camera-controls" id="camera-controls">
+                    <button class="camera-btn active" onclick="game.switchCamera(0)">CAM 1: LOBBY</button>
+                    <button class="camera-btn" onclick="game.switchCamera(1)">CAM 2: HALLWAY</button>
+                    <button class="camera-btn" onclick="game.switchCamera(2)">CAM 3: BASEMENT</button>
+                    <button class="camera-btn" onclick="game.switchCamera(3)">CAM 4: EXTERIOR</button>
                 </div>
             </div>
 
@@ -337,7 +559,7 @@
                 </div>
 
                 <div class="panel">
-                    <div class="panel-title">Threats</div>
+                    <div class="panel-title">Threats & Alerts</div>
                     <ul class="threat-list" id="threat-list">
                         <li class="threat-item">System initialized...</li>
                     </ul>
@@ -356,6 +578,86 @@
     </div>
 
     <script>
+        // Audio synthesis for creature sounds
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCreatureSound() {
+            const now = audioContext.currentTime;
+            const duration = 1.5;
+
+            // Main creepy frequency sweep
+            const osc1 = audioContext.createOscillator();
+            const gain1 = audioContext.createGain();
+            osc1.connect(gain1);
+            gain1.connect(audioContext.destination);
+
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(150, now);
+            osc1.frequency.exponentialRampToValueAtTime(80, now + duration);
+
+            gain1.gain.setValueAtTime(0.3, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+            // Distorted noise layer
+            const bufferSize = audioContext.sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            
+            const noiseGain = audioContext.createGain();
+            source.connect(noiseGain);
+            noiseGain.connect(audioContext.destination);
+            
+            noiseGain.gain.setValueAtTime(0.15, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+            // High-pitched screech
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+
+            osc2.type = 'sawtooth';
+            osc2.frequency.setValueAtTime(400, now);
+            osc2.frequency.exponentialRampToValueAtTime(250, now + 0.5);
+
+            gain2.gain.setValueAtTime(0.05, now);
+            gain2.gain.exponentialRampToValueAtTime(0, now + 0.5);
+
+            osc1.start(now);
+            osc1.stop(now + duration);
+            source.start(now);
+            source.stop(now + duration);
+            osc2.start(now);
+            osc2.stop(now + 0.5);
+        }
+
+        function playScreech() {
+            const now = audioContext.currentTime;
+            const duration = 0.8;
+
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 0.2);
+            osc.frequency.exponentialRampToValueAtTime(300, now + duration);
+
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0, now + duration);
+
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+
         const game = {
             wave: 1,
             time: 300,
@@ -367,6 +669,24 @@
             isPanicMode: false,
             threatCount: 0,
             wavesSurvived: 0,
+            currentCamera: 0,
+
+            // Camera system
+            cameras: [
+                { name: 'LOBBY', description: 'Main entrance area', threatLevel: 0, activity: [], bgClass: 'lobby-bg' },
+                { name: 'HALLWAY', description: 'East corridor', threatLevel: 0, activity: [], bgClass: 'hallway-bg' },
+                { name: 'BASEMENT', description: 'Underground level', threatLevel: 0, activity: [], bgClass: 'basement-bg' },
+                { name: 'EXTERIOR', description: 'Outside perimeter', threatLevel: 0, activity: [], bgClass: 'exterior-bg' }
+            ],
+
+            // Creature sounds
+            sounds: [
+                '🔊 GHRUUUUH...',
+                '🔊 SCCREEEEECH...',
+                '🔊 GRRAAAHHH...',
+                '🔊 WROOOAARRGH...',
+                '🔊 SCREEEEEK...'
+            ],
 
             init() {
                 this.updateUI();
@@ -406,29 +726,93 @@
             startWave() {
                 this.time = 300;
                 this.threatCount = 0;
+                this.cameras.forEach(cam => {
+                    cam.threatLevel = 0;
+                    cam.activity = [];
+                });
                 this.updateThreats();
             },
 
             threatAppears() {
-                const entity = document.getElementById('entity');
-                const statusText = document.getElementById('status-text');
+                const cameraIndex = Math.floor(Math.random() * this.cameras.length);
+                const camera = this.cameras[cameraIndex];
                 
                 this.threatCount++;
-                entity.style.display = 'block';
-                entity.style.left = Math.random() * 80 + '%';
-                entity.style.top = Math.random() * 80 + '%';
-                
-                statusText.innerHTML = `<div style="color: #ff4444;">⚠️ THREAT DETECTED ⚠️</div>`;
+                camera.threatLevel++;
+                camera.activity.push(`🚨 Threat detected at ${Date.now()}`);
 
-                this.sanity -= 10;
-                if (!this.doorLocked) this.health -= 15;
+                // If threat is in current camera, show it
+                if (cameraIndex === this.currentCamera) {
+                    const entity = document.getElementById('entity');
+                    const statusText = document.getElementById('status-text');
+                    const scene = document.getElementById('camera-scene');
+                    
+                    entity.style.display = 'block';
+                    entity.style.left = Math.random() * 80 + '%';
+                    entity.style.top = Math.random() * 80 + '%';
+                    entity.classList.add('moving');
+                    
+                    scene.classList.add('glitch-effect');
+                    
+                    statusText.innerHTML = `<div style="color: #ff4444;">⚠️ THREAT DETECTED IN ${camera.name} ⚠️</div>`;
 
-                setTimeout(() => {
-                    entity.style.display = 'none';
-                    statusText.innerHTML = `<div>SYSTEM ONLINE</div><div style="font-size: 12px; color: #444;">Monitoring facility...</div>`;
-                }, 800);
+                    // Play creature sound
+                    playCreatureSound();
+
+                    // Display sound effect text
+                    const soundText = document.createElement('div');
+                    soundText.className = 'creature-sound';
+                    soundText.textContent = this.sounds[Math.floor(Math.random() * this.sounds.length)];
+                    soundText.style.left = entity.style.left;
+                    soundText.style.top = entity.style.top;
+                    scene.appendChild(soundText);
+                    setTimeout(() => soundText.remove(), 2000);
+
+                    this.sanity -= 10;
+                    if (!this.doorLocked) this.health -= 15;
+
+                    setTimeout(() => {
+                        entity.style.display = 'none';
+                        entity.classList.remove('moving');
+                        scene.classList.remove('glitch-effect');
+                        statusText.innerHTML = `<div>SYSTEM ONLINE</div><div style="font-size: 12px; color: #444;">Monitoring facility...</div>`;
+                    }, 1500);
+                } else {
+                    // Alert about threat in other camera with quiet sound
+                    playScreech();
+                    this.sanity -= 5;
+                }
 
                 this.updateThreats();
+            },
+
+            switchCamera(index) {
+                this.currentCamera = index;
+                const camera = this.cameras[index];
+                
+                // Update scene background
+                const bgElement = document.getElementById('scene-bg');
+                bgElement.className = `scene-background ${camera.bgClass}`;
+                
+                // Update UI
+                document.getElementById('camera-location').textContent = `📹 CAMERA ${index + 1}: ${camera.name}`;
+                
+                // Update button states
+                const buttons = document.querySelectorAll('.camera-btn');
+                buttons.forEach((btn, i) => {
+                    btn.classList.toggle('active', i === index);
+                });
+
+                // Clear current view and show camera feed
+                const statusText = document.getElementById('status-text');
+                if (camera.activity.length > 0) {
+                    statusText.innerHTML = `<div style="color: #ffff00;">⚠️ ACTIVITY IN ${camera.name}</div><div style="font-size: 12px; color: #ff9900;">Threat Level: ${camera.threatLevel}</div>`;
+                } else {
+                    statusText.innerHTML = `<div>CAMERA ${index + 1}: ${camera.name}</div><div style="font-size: 12px; color: #444;">${camera.description}</div>`;
+                }
+
+                document.getElementById('entity').style.display = 'none';
+                this.energy -= 5; // Switching cameras costs energy
             },
 
             updateThreats() {
@@ -436,11 +820,19 @@
                 threatList.innerHTML = '';
                 
                 const threats = [
-                    `[WAVE ${this.wave}] Entities detected: ${this.threatCount}`,
-                    `Door status: ${this.doorLocked ? 'LOCKED' : 'UNLOCKED'}`,
-                    `Lights: ${this.lightsOn ? 'ON' : 'OFF'}`,
-                    `Time remaining: ${Math.floor(this.time / 60)}m ${this.time % 60}s`
+                    `[WAVE ${this.wave}] Total entities: ${this.threatCount}`,
+                    `Current camera: ${this.cameras[this.currentCamera].name}`,
+                    `Door status: ${this.doorLocked ? '🔒 LOCKED' : '🔓 UNLOCKED'}`,
+                    `Lights: ${this.lightsOn ? '💡 ON' : '⚫ OFF'}`,
+                    `---`,
                 ];
+
+                // Add per-camera threat levels
+                this.cameras.forEach((cam, i) => {
+                    if (cam.threatLevel > 0) {
+                        threats.push(`⚠️ ${cam.name}: Level ${cam.threatLevel}`);
+                    }
+                });
 
                 threats.forEach(threat => {
                     const li = document.createElement('li');
